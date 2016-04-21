@@ -34,7 +34,29 @@ Note : Check the function Parameters ,Its a double pointer .
 #include "stdafx.h"
 #include<stdlib.h>
 
+int *insert_spiral(int **arr, int row, int col, int x, int y, int *result, int count, int ind){
+	if (count>=ind)return result;
+	int rindex, cindex;
+	for (cindex = y; cindex<col; cindex++, count++)
+		result[count] = arr[x][cindex];
+	for (rindex = x + 1; rindex<row; rindex++, count++){
+		result[count] = arr[rindex][cindex - 1];
+	}
+	for (cindex = cindex - 2; cindex >= y; cindex--){
+		result[count] = arr[rindex - 1][cindex];
+		count++;
+	}
+	for (rindex = rindex - 2; rindex>x; rindex--){
+		result[count] = arr[rindex][cindex + 1];
+		count++;
+	}
+	insert_spiral(arr, row - 1, col - 1, x + 1, y + 1, result, count, ind);
+}
 int *spiral(int rows, int columns, int **input_array)
 {
-	return NULL;
+	if (rows <= 0 || columns <= 0 || input_array == NULL)
+		return NULL;
+	int *result = (int *)malloc(sizeof(int)*rows*columns);
+	insert_spiral(input_array, rows, columns, 0, 0, result, 0, rows*columns);
+	return result;
 }
