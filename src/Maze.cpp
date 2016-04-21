@@ -34,9 +34,46 @@ more parameters .
 */
 
 #include<stdlib.h>
-
-
+int is_safe(int **arr, int x, int y, int rows, int columns, int **ind){
+	if (x >= 0 && y >= 0 && x < rows&&y < columns){
+		if (arr[x][y] == 1 && ind[x][y] != 1)
+			return 1;
+	}
+	return 0;
+}
+int maze_sol(int **arr, int rows, int columns, int x1, int y1, int x2, int y2, int **ind){
+	if (x1 == x2&&y1 == y2)return 1;
+	if (is_safe(arr, x1, y1, rows, columns, ind)){
+		ind[x1][y1] = 1;
+		if (maze_sol(arr, rows, columns, x1 + 1, y1, x2, y2, ind))
+			return 1;
+		if (maze_sol(arr, rows, columns, x1, y1 + 1, x2, y2, ind))
+			return 1;
+		if (maze_sol(arr, rows, columns, x1 - 1, y1, x2, y2, ind))
+			return 1;
+		if (maze_sol(arr, rows, columns, x1, y1 - 1, x2, y2, ind))
+			return 1;
+		ind[x1][y1] = 0;
+		return 0;
+	}
+	return 0;
+}
 int path_exists(int *maze, int rows, int columns, int x1, int y1, int x2, int y2)
 {
-	return 1;
+	if (maze == NULL || rows <= 0 || columns <= 0 || x1 < 0 || x2 < 0 || y1 >= columns || y2 >= columns || y1 < 0 || y2 < 0 || x1 >= rows || x2 >= rows)return 0;
+	int **arr;
+	arr = (int **)malloc(sizeof(int *)*rows);
+	
+	for (int index = 0; index < rows; index++)
+		arr[index] = &maze[columns*index];
+	if (arr[x2][y2] == 0||arr[x1][y1]==0)return 0;
+	int **ind = (int **)malloc(sizeof(int *)*rows);
+	for (int i = 0; i<rows; i++){
+		ind[i] = (int *)malloc(sizeof(int)*columns);
+		for (int j = 0; j<columns; j++)
+			ind[i][j] = 0;
+	}
+	if (maze_sol(arr, rows, columns, x1, y1, x2, y2, ind))
+		return 1;
+	return 0;
 }
