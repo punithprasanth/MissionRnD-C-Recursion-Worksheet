@@ -43,6 +43,34 @@ P.S: The Above Problem is just a modified version of a popular BackTracking prob
 */
 
 #include "stdafx.h"
+#include "malloc.h"
+int issafe(int **arr, int row, int col, int n){
+	int i, j;
+	for (i = 0; i<n; i++)
+		if (arr[row][i])return 0;
+	for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
+		if (arr[i][j])return 0;
+	for (i = row, j = col; j >= 0 && i<n; i++, j--)
+		if (arr[i][j])return 0;
+	return 1;
+}
+int snipers(int **arr, int col, int n){
+	if (col >= n) return 1;
+	for (int index = 0; index<n; index++){
+		if (issafe(arr, index, col, n)){
+			arr[index][col] = 1;
+			if (snipers(arr, col + 1, n))
+				return 1;
+		}
+		arr[index][col] = 0;
+	}
+	return 0;
+}
 int solve_nsnipers(int *battlefield, int n){
+	if (battlefield == NULL || n <= 0)return 0;
+	int **arr = (int **)malloc(sizeof(int *)*n);
+	for (int index = 0; index<n; index++)
+		arr[index] = &battlefield[index*n];
+	if(snipers(arr, 0, n))return 1;
 	return 0;
 }
